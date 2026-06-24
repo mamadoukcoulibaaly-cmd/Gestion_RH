@@ -1,0 +1,84 @@
+{% extends 'information_employees/base.html' %}
+
+{% block title %}Connexion / Inscrivez-vous ?{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card p-4 mb-4">
+            <h3 class="mb-4"><i class="bi bi-person-lock me-2"></i>Connexion</h3>
+            <form method="post" action="{% url 'login' %}" novalidate>
+                {% csrf_token %}
+                {% if login_form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Erreur :</strong> Vérifiez vos identifiants.
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label" for="id_username">Nom d'utilisateur</label>
+                    {{ login_form.username }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="id_password">Mot de passe</label>
+                    {{ login_form.password }}
+                </div>
+
+                <button type="submit" class="btn btn-primary"><i class="bi bi-box-arrow-in-right me-1"></i>Se connecter</button>
+                <button type="button" id="show-signup" class="btn btn-link mt-3">Inscrivez-vous ?</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-6" id="signup" style="display:none;">
+        <div class="card p-4 mb-4">
+            <h3 class="mb-4">Inscrivez-vous ?</h3>
+            <form method="post" action="{% url 'signup' %}" novalidate>
+                {% csrf_token %}
+                {% if register_form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Erreur :</strong> Vérifiez les champs du formulaire.
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label" for="id_username">Nom d'utilisateur</label>
+                    {{ register_form.username }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="id_email">Email</label>
+                    {{ register_form.email }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="id_password1">Mot de passe</label>
+                    {{ register_form.password1 }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="id_password2">Confirmation du mot de passe</label>
+                    {{ register_form.password2 }}
+                </div>
+
+                <button type="submit" class="btn btn-success">S'inscrire</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const showSignup = document.getElementById('show-signup');
+        const signupSection = document.getElementById('signup');
+
+        if (showSignup && signupSection) {
+            showSignup.addEventListener('click', function () {
+                signupSection.style.display = 'block';
+                signupSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+    });
+</script>
+{% endblock %}

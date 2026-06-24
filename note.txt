@@ -1,0 +1,23 @@
+Commandes pour lancer le projet Django
+======================================
+
+1. Aller dans le dossier du projet :
+   cd "PYTHON_DJANGO\gestion_ressource_humaines"
+
+2. Activer l'environnement virtuel :
+   .\venv\Scripts\activate
+
+3. Installer les dependances si necessaire :
+   pip install -r requirements.txt
+
+4. Appliquer les migrations :
+   python manage.py migrate
+
+5. Lancer le serveur :
+   python manage.py runserver
+
+6. Ouvrir le projet dans le navigateur :
+   http://127.0.0.1:8000/
+
+Commande de verification :
+   python manage.py check

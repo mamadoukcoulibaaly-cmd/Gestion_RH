@@ -1,0 +1,323 @@
+{% extends 'information_employees/base.html' %}
+
+{% block title %}Formulaire — Gestion RH{% endblock %}
+
+{% block content %}
+
+<style>
+    .card-form {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #198754, #20c997); 
+        color: white;
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255,255,255,.2);
+    }
+
+    .form-section {
+        border: 1px solid #e9ecef;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        background: #fff;
+    }
+
+    .form-section legend {
+        color: #198754; /* vert émeraude */
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0 .5rem;
+        width: auto;
+        float: none;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 10px;
+        padding: .75rem;
+        border: 1px solid #ced4da;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        box-shadow: 0 0 0 .25rem rgba(32,201,151,.25); /* turquoise glow */
+        border-color: #20c997;
+    }
+
+    .btn-action {
+        min-width: 140px;
+        background-color: #198754;
+        border-color: #198754;
+        color: #fff;
+        font-weight: 500;
+    }
+
+    .btn-action:hover {
+        background-color: #157347;
+        border-color: #146c43;
+    }
+
+    .required {
+        color: #dc3545;
+    }
+</style>
+
+<div class="card card-form">
+    <div class="form-header">
+        <h2 class="mb-1">
+            {% if view.object %}
+                <i class="bi bi-pencil-square me-2"></i>
+                Modifier {{ model_verbose_name }}
+            {% else %}
+                <i class="bi bi-plus-circle-fill me-2"></i>
+                Ajouter {{ model_verbose_name }}
+            {% endif %}
+        </h2>
+
+        <p class="mb-0 opacity-75">
+            Complétez les informations demandées ci-dessous.
+        </p>
+    </div>
+
+    <div class="card-body p-4">
+
+    <form method="post" novalidate>
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% if model_name == 'employe' %}
+
+        <fieldset class="form-section">
+            <legend>
+                <i class="bi bi-person-vcard me-2"></i>
+                Informations personnelles
+            </legend>
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">Matricule</label>
+                    {{ form.matricule }}
+                    {% if form.matricule.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.matricule.errors|striptags }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Prénom</label>
+                    {{ form.prenom }}
+                    {% if form.prenom.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.prenom.errors|striptags }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Nom</label>
+                    {{ form.nom }}
+                    {% if form.nom.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.nom.errors|striptags }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Genre</label>
+                    {{ form.genre }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Date de naissance</label>
+                    {{ form.date_naissance }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Téléphone</label>
+                    {{ form.telephone }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    {{ form.email }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Adresse</label>
+                    {{ form.adresse }}
+                </div>
+
+            </div>
+        </fieldset>
+
+        <fieldset class="form-section">
+            <legend>
+                <i class="bi bi-briefcase-fill me-2"></i>
+                Informations professionnelles
+            </legend>
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">Poste</label>
+                    {{ form.poste }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Département</label>
+                    {{ form.departement }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Date d'embauche</label>
+                    {{ form.date_embauche }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Situation</label>
+                    {{ form.situation }}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Notes</label>
+                    {{ form.notes }}
+                </div>
+
+            </div>
+        </fieldset>
+
+        {% elif model_name == 'contrat' %}
+
+        <fieldset class="form-section">
+            <legend>
+                <i class="bi bi-file-earmark-text-fill me-2"></i>
+                Informations du contrat
+            </legend>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label">Employé</label>
+                    {{ form.employe }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Type de contrat</label>
+                    {{ form.type_contrat }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Date de début</label>
+                    {{ form.date_debut }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Date de fin</label>
+                    {{ form.date_fin }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Salaire</label>
+                    {{ form.salaire }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Référence</label>
+                    {{ form.fichier_reference }}
+                </div>
+
+                <div class="col-md-6 d-flex align-items-center">
+                    <div class="form-check mt-4">
+                        {{ form.actif }}
+                        <label class="form-check-label">
+                            Contrat actif
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Observations</label>
+                    {{ form.observations }}
+                </div>
+
+            </div>
+        </fieldset>
+
+        {% else %}
+
+        <fieldset class="form-section">
+            <legend>
+                <i class="bi bi-info-circle-fill me-2"></i>
+                Informations
+            </legend>
+
+            <div class="row g-3">
+
+                {% for field in form %}
+                    {% if not field.is_hidden %}
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                        <div class="form-text">
+                            {{ field.help_text }}
+                        </div>
+                        {% endif %}
+
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ field.errors|striptags }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        </fieldset>
+
+        {% endif %}
+
+        <div class="border-top pt-4 mt-4">
+            <div class="d-flex justify-content-end gap-3 flex-wrap">
+
+                <a href="javascript:history.back()"
+                   class="btn btn-outline-secondary btn-action">
+                    <i class="bi bi-arrow-left-circle me-2"></i>
+                    Annuler
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary btn-action">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    Enregistrer
+                </button>
+
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+</div>
+
+{% endblock %}

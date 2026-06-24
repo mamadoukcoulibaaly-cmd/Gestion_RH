@@ -1,0 +1,373 @@
+{% extends 'information_employees/base.html' %}
+
+{% block title %}Employés — Gestion RH{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-header{
+        background: linear-gradient(135deg,#198754,#20c997);
+        color:white;
+        padding:2rem;
+        border-radius:20px;
+        margin-bottom:1.5rem;
+        box-shadow:0 10px 25px rgba(25,135,84,.25);
+    }
+
+    .filter-card,
+    .table-card{
+        border:none;
+        border-radius:20px;
+        box-shadow:0 8px 25px rgba(0,0,0,.08);
+    }
+
+    .employee-avatar{
+        width:40px;
+        height:40px;
+        border-radius:50%;
+        background:#20c997;
+        color:white;
+        font-weight:600;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    }
+
+    .table tbody tr{
+        transition:.2s;
+    }
+
+    .table tbody tr:hover{
+        background:#fdfdfd;
+    }
+
+    .badge-status{
+        min-width:100px;
+        padding:.55rem .75rem;
+        border-radius:50px;
+    }
+
+    .page-link{
+        border-radius:10px ;
+        margin:0 3px;
+    }
+
+  
+    .btn-primary{
+        background-color:#198754;
+        border-color:#198754;
+    }
+
+    .btn-primary:hover{
+        background-color:#157347;
+        border-color:#146c43;
+    }
+
+    .btn-outline-primary{
+        color:#198754;
+        border-color:#198754;
+    }
+
+    .btn-outline-primary:hover{
+        background-color:#198754;
+        color:white;
+    }
+
+    .btn-outline-danger{
+        color:#fd7e14;
+        border-color:#fd7e14;
+    }
+
+    .btn-outline-danger:hover{
+        background-color:#fd7e14;
+        color:white;
+    }
+
+    .badge.bg-primary{
+        background-color:#20c997 ;
+    }
+
+    .text-primary{
+        color:#198754 ;
+    }
+</style>
+
+<div class="page-header">
+
+
+<div class="d-flex justify-content-between align-items-center flex-wrap">
+
+    <div>
+        <h1 class="fw-bold mb-2">
+            <i class="bi bi-people-fill me-2"></i>
+            Gestion des employés
+        </h1>
+
+        <p class="mb-0 opacity-75">
+            Rechercher, filtrer et gérer les employés de l'entreprise.
+        </p>
+    </div>
+
+    <a href="{% url 'employe_create' %}"
+       class="btn btn-light btn-lg mt-3 mt-md-0">
+        <i class="bi bi-person-plus-fill me-2"></i>
+        Ajouter un employé
+    </a>
+
+</div>
+
+
+</div>
+
+<div class="card filter-card mb-4">
+
+<div class="card-body">
+
+    <form method="get">
+
+        <div class="row g-3 align-items-end">
+
+            <div class="col-lg-5">
+
+                <label class="form-label fw-semibold">
+                    Recherche
+                </label>
+
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
+
+                    <input type="search"
+                           name="q"
+                           value="{{ q }}"
+                           class="form-control"
+                           placeholder="Nom, matricule, poste...">
+                </div>
+
+            </div>
+
+            <div class="col-lg-4">
+
+                <label class="form-label fw-semibold">
+                    Département
+                </label>
+
+                <select name="departement"
+                        class="form-select">
+
+                    <option value="">
+                        Tous les départements
+                    </option>
+
+                    {% for departement in departements %}
+                    <option value="{{ departement.id }}"
+                        {% if departement_selectionne == departement.id|stringformat:'s' %}
+                        selected
+                        {% endif %}>
+                        {{ departement.nom }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="col-lg-3 d-grid">
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    <i class="bi bi-funnel-fill me-2"></i>
+                    Filtrer
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+</div>
+
+<div class="card table-card">
+
+
+<div class="card-header bg-white border-0 py-3">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <h5 class="mb-0">
+            <i class="bi bi-table me-2 text-primary"></i>
+            Liste des employés
+        </h5>
+
+        <span class="badge bg-primary">
+            {{ employes|length }} résultat{{ employes|length|pluralize }}
+        </span>
+
+    </div>
+
+</div>
+
+<div class="table-responsive">
+
+    <table class="table align-middle mb-0">
+
+        <thead class="table-light">
+
+            <tr>
+                <th>Employé</th>
+                <th>Matricule</th>
+                <th>Poste</th>
+                <th>Département</th>
+                <th>Statut</th>
+                <th class="text-end">Actions</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for employe in employes %}
+
+            <tr>
+
+                <td>
+
+                    <div class="d-flex align-items-center">
+
+                        <div class="employee-avatar me-3">
+                            {{ employe.prenom|first }}{{ employe.nom|first }}
+                        </div>
+
+                        <div>
+
+                            <a href="{% url 'employe_detail' employe.pk %}"
+                               class="fw-semibold text-decoration-none">
+                                {{ employe.nom_complet }}
+                            </a>
+
+                            <div class="small text-muted">
+                                {{ employe.email }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+                <td>
+                    <span class="badge bg-light text-dark">
+                        {{ employe.matricule }}
+                    </span>
+                </td>
+
+                <td>{{ employe.poste }}</td>
+
+                <td>{{ employe.departement.nom }}</td>
+
+                <td>
+
+                    <span class="badge badge-status
+                    {% if employe.situation == 'actif' %}
+                        bg-success
+                    {% elif employe.situation == 'conge' %}
+                        bg-warning text-dark
+                    {% elif employe.situation == 'suspendu' %}
+                        bg-secondary
+                    {% else %}
+                        bg-danger
+                    {% endif %}">
+                        {{ employe.get_situation_display }}
+                    </span>
+
+                </td>
+
+                <td class="text-end">
+
+                    <a href="{% url 'employe_update' employe.pk %}"
+                       class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <a href="{% url 'employe_delete' employe.pk %}"
+                       class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash"></i>
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="6" class="text-center py-5">
+
+                    <i class="bi bi-inbox display-5 text-muted"></i>
+
+                    <p class="text-muted mt-3 mb-0">
+                        Aucun employé trouvé.
+                    </p>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+</div>
+
+{% if is_paginated %}
+
+<nav class="mt-4">
+
+<ul class="pagination justify-content-center">
+
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+        <a class="page-link"
+           href="?q={{ q }}&departement={{ departement_selectionne }}&page={{ page_obj.previous_page_number }}">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+    </li>
+    {% endif %}
+
+    {% for num in paginator.page_range %}
+    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+        <a class="page-link"
+           href="?q={{ q }}&departement={{ departement_selectionne }}&page={{ num }}">
+            {{ num }}
+        </a>
+    </li>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <li class="page-item">
+        <a class="page-link"
+           href="?q={{ q }}&departement={{ departement_selectionne }}&page={{ page_obj.next_page_number }}">
+            <i class="bi bi-chevron-right"></i>
+        </a>
+    </li>
+    {% endif %}
+
+</ul>
+
+
+</nav>
+
+{% endif %}
+
+{% endblock %}

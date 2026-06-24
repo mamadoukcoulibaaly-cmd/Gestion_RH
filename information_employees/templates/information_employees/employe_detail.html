@@ -1,0 +1,347 @@
+{% extends 'information_employees/base.html' %}
+
+{% block title %}{{ employe.nom_complet }} — Gestion RH{% endblock %}
+
+{% block content %}
+
+<style>
+    .profile-header{
+        background:linear-gradient(135deg,#0d6efd,#4f8cff);
+        color:white;
+        border-radius:25px;
+        padding:2rem;
+        margin-bottom:2rem;
+        box-shadow:0 10px 30px rgba(13,110,253,.25);
+    }
+
+    .profile-avatar{
+        width:90px;
+        height:90px;
+        border-radius:50%;
+        background:rgba(255,255,255,.2);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:2rem;
+        font-weight:bold;
+        color:white;
+    }
+
+    .info-card{
+        border:none;
+        border-radius:20px;
+        box-shadow:0 8px 25px rgba(0,0,0,.08);
+        height:100%;
+    }
+
+    .info-card .card-header{
+        background:white;
+        border-bottom:1px solid #f1f1f1;
+        font-weight:600;
+    }
+
+    .detail-label{
+        color:#6c757d;
+        font-weight:600;
+    }
+
+    .table-card{
+        border:none;
+        border-radius:20px;
+        box-shadow:0 8px 25px rgba(0,0,0,.08);
+    }
+
+    .badge-status{
+        padding:.55rem .85rem;
+        border-radius:50px;
+    }
+
+    .info-item{
+        padding:.75rem 0;
+        border-bottom:1px solid #f1f1f1;
+    }
+
+    .info-item:last-child{
+        border-bottom:none;
+    }
+</style>
+
+<div class="profile-header">
+
+
+<div class="d-flex justify-content-between align-items-center flex-wrap">
+
+    <div class="d-flex align-items-center">
+
+        <div class="profile-avatar me-4">
+            {{ employe.prenom|first }}{{ employe.nom|first }}
+        </div>
+
+        <div>
+
+            <h1 class="fw-bold mb-1">
+                {{ employe.nom_complet }}
+            </h1>
+
+            <p class="mb-2 opacity-75">
+                {{ employe.poste }} • {{ employe.departement.nom }}
+            </p>
+
+            <span class="badge
+                {% if employe.situation == 'actif' %}
+                    bg-success
+                {% elif employe.situation == 'conge' %}
+                    bg-warning text-dark
+                {% elif employe.situation == 'suspendu' %}
+                    bg-secondary
+                {% else %}
+                    bg-danger
+                {% endif %}
+                badge-status">
+
+                {{ employe.get_situation_display }}
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="mt-3 mt-md-0">
+
+        <a href="{% url 'employe_update' employe.pk %}"
+           class="btn btn-light me-2">
+            <i class="bi bi-pencil-square me-2"></i>
+            Modifier
+        </a>
+
+        <a href="{% url 'employe_delete' employe.pk %}"
+           class="btn btn-danger">
+            <i class="bi bi-trash me-2"></i>
+            Supprimer
+        </a>
+
+    </div>
+
+</div>
+
+
+</div>
+
+<div class="row g-4">
+
+
+<div class="col-lg-6">
+
+    <div class="card info-card">
+
+        <div class="card-header py-3">
+            <i class="bi bi-person-vcard me-2 text-primary"></i>
+            Informations personnelles
+        </div>
+
+        <div class="card-body">
+
+            <div class="info-item">
+                <div class="detail-label">Matricule</div>
+                <div>{{ employe.matricule }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="detail-label">Genre</div>
+                <div>{{ employe.get_genre_display }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="detail-label">Date de naissance</div>
+                <div>{{ employe.date_naissance|date:'d/m/Y' }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="detail-label">Email</div>
+                <div>
+                    <a href="mailto:{{ employe.email }}">
+                        {{ employe.email }}
+                    </a>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="detail-label">Téléphone</div>
+                <div>{{ employe.telephone|default:'-' }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="detail-label">Adresse</div>
+                <div>{{ employe.adresse|linebreaksbr|default:'-' }}</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-lg-6">
+
+    <div class="card info-card">
+
+        <div class="card-header py-3">
+            <i class="bi bi-briefcase-fill me-2 text-success"></i>
+            Informations professionnelles
+        </div>
+
+        <div class="card-body">
+
+            <div class="info-item">
+                <div class="detail-label">Poste</div>
+                <div>{{ employe.poste }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="detail-label">Département</div>
+                <div>{{ employe.departement.nom }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="detail-label">Date d'embauche</div>
+                <div>{{ employe.date_embauche|date:'d/m/Y' }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="detail-label">Situation</div>
+                <div>{{ employe.get_situation_display }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="detail-label">Notes</div>
+                <div>{{ employe.notes|linebreaksbr|default:'Aucune note' }}</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+<div class="card table-card mt-4">
+
+<div class="card-header bg-white py-3">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <div>
+            <h4 class="mb-1">
+                <i class="bi bi-file-earmark-text-fill me-2 text-primary"></i>
+                Contrats
+            </h4>
+
+            <small class="text-muted">
+                Historique des contrats de l'employé
+            </small>
+        </div>
+
+        <a href="{% url 'contrat_list' %}"
+           class="btn btn-outline-primary">
+            Tous les contrats
+        </a>
+
+    </div>
+
+</div>
+
+<div class="card-body">
+
+    {% if employe.contrats.all %}
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle">
+
+            <thead class="table-light">
+
+                <tr>
+                    <th>Type</th>
+                    <th>Date début</th>
+                    <th>Date fin</th>
+                    <th>Salaire</th>
+                    <th>Statut</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for contrat in employe.contrats.all %}
+
+                <tr>
+
+                    <td>
+                        {{ contrat.get_type_contrat_display }}
+                    </td>
+
+                    <td>
+                        {{ contrat.date_debut|date:'d/m/Y' }}
+                    </td>
+
+                    <td>
+                        {% if contrat.date_fin %}
+                            {{ contrat.date_fin|date:'d/m/Y' }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <strong>
+                            {{ contrat.salaire }} €
+                        </strong>
+                    </td>
+
+                    <td>
+
+                        {% if contrat.actif %}
+                            <span class="badge bg-success">
+                                Actif
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                Inactif
+                            </span>
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="text-center py-5">
+
+        <i class="bi bi-file-earmark-x display-4 text-muted"></i>
+
+        <p class="text-muted mt-3 mb-0">
+            Aucun contrat enregistré pour cet employé.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+</div>
+
+{% endblock %}
